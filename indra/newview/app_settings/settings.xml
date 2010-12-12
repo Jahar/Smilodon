@@ -7960,6 +7960,39 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+	<key>MiniMapHighlightPhysical</key>
+    <map>
+      <key>Comment</key>
+      <string>Highlight physics-enabled prims (i.e. vehicles)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>MiniMapPhantomIsTransparent</key>
+    <map>
+      <key>Comment</key>
+      <string>Partially hide phantom prims by displaying them as semi transparent</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>MiniMapPhantomOpacity</key>
+    <map>
+      <key>Comment</key>
+      <string>Opacity of phantom primst</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>S32</string>
+      <key>Value</key>
+      <integer>96</integer>
+    </map>
     <key>MiniMapScale</key>
     <map>
       <key>Comment</key>

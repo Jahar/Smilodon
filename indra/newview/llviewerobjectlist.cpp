@@ -1092,6 +1092,15 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 
 	F32 max_radius = gSavedSettings.getF32("MiniMapPrimMaxRadius");
 
+	//Avoid performance hits by using LLCachedControl
+	static LLCachedControl<S32> phantom_opacity( "MiniMapPhantomOpacity", 96);
+	static LLCachedControl<BOOL> minimap_phantom_is_transparent("MiniMapPhantomIsTransparent",FALSE);
+	static LLCachedControl<BOOL> minimap_highlight_physical("MiniMapHighlightPhysical", FALSE);
+	
+	// make it a bit faster by placing the reading of settings outside the loop
+	//BOOL minimap_phantom_is_transparent 	= gSavedSettings.getBOOL("MiniMapPhantomIsTransparent");
+	//BOOL minimap_highlight_physical		= gSavedSettings.getBOOL("MiniMapHighlightPhysical");
+	//U32 phantom_opacity			= gSavedSettings.getU32("PhantomPrimOpacity");
 	for (S32 i = 0; i < mMapObjects.count(); i++)
 	{
 		LLViewerObject* objectp = mMapObjects[i];
@@ -1143,12 +1152,25 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 			}
 		}
 		}
-		else
-		if( pos.mdV[VZ] < water_height )
+		else if( pos.mdV[VZ] < water_height )
 		{
 			color = below_water_color;
 		}
 
+		// render phantom objects partially transparent
+		if(objectp->flagPhantom()&&minimap_phantom_is_transparent)
+		{
+			color.setAlpha(llclampb((S32)phantom_opacity));
+		}
+		
+		// render physical objects bigger, and red or green depending on owner
+		if(objectp->usePhysics()&&minimap_highlight_physical)
+		{
+			color = (objectp->permYouOwner()?(LLColor4::green):(LLColor4::red));
+			const F32 MIN_RADIUS_FOR_PHYSICAL_OBJECTS = 4.f;
+			approx_radius = llmax(approx_radius, MIN_RADIUS_FOR_PHYSICAL_OBJECTS);
+		}
+		
 		netmap.renderScaledPointGlobal( 
 			pos, 
 			color,

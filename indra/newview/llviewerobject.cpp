@@ -2814,6 +2814,7 @@ LLDrawable* LLViewerObject::createDrawable(LLPipeline *pipeline)
 
 void LLViewerObject::setScale(const LLVector3 &scale, BOOL damped)
 {
+	static LLCachedControl<BOOL> minimap_highlight_physical("MiniMapHighlightPhysical", FALSE);
 	LLPrimitive::setScale(scale);
 	if (mDrawable.notNull())
 	{
@@ -2825,7 +2826,8 @@ void LLViewerObject::setScale(const LLVector3 &scale, BOOL damped)
 
 	if( (LL_PCODE_VOLUME == getPCode()) && !isDead() )
 	{
-		if (permYouOwner() || (scale.magVecSquared() > (7.5f * 7.5f)) )
+		// physical objects should always appear on the map!
+		if (permYouOwner() || (scale.magVecSquared() > (7.5f * 7.5f)) || usePhysics()&&minimap_highlight_physical)
 		{
 			if (!mOnMap)
 			{
