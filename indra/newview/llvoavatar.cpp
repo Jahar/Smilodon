@@ -38,6 +38,7 @@
 #include <ctype.h>
 
 #include "llaudioengine.h"
+#include "llavatarnamecache.h"
 #include "noise.h"
 #include "llsdserialize.h"
 
@@ -758,6 +759,7 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	mAppearanceAnimating(FALSE),
 	mNameString(),
 	mTitle(),
+	mCompleteName(),
 	mNameAway(FALSE),
 	mNameBusy(FALSE),
 	mNameMute(FALSE),
@@ -3816,6 +3818,34 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 
 		if (mNameText.notNull() && firstname && lastname)
 		{
+		std::string complete_name = firstname->getString();
+			if (sRenderGroupTitles)
+			{
+				complete_name += " ";
+			}
+			else
+			{
+				// If all group titles are turned off, stack first name
+				// on a line above last name
+				complete_name += "\n";
+			}
+			complete_name += lastname->getString();
+
+			if (LLAvatarNameCache::useDisplayNames())
+			{
+				LLAvatarName avatar_name;
+				if (LLAvatarNameCache::get(getID(), &avatar_name))
+				{
+					if (LLAvatarNameCache::useDisplayNames() == 2)
+					{
+						complete_name = avatar_name.mDisplayName;
+					}
+					else
+					{
+						complete_name = avatar_name.getNames(true);
+					}
+				}
+			}
 			BOOL is_away = mSignaledAnimations.find(ANIM_AGENT_AWAY)  != mSignaledAnimations.end();
 			if(mNameAway && ! is_away) mIdleTimer.reset();
 			BOOL is_busy = mSignaledAnimations.find(ANIM_AGENT_BUSY) != mSignaledAnimations.end();
@@ -3834,7 +3864,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			}
 
 			if (mNameString.empty() ||
-				new_name ||
+				new_name || complete_name != mCompleteName ||
 				(!title && !mTitle.empty()) ||
 				(title && mTitle != title->getString()) ||
 				(is_away != mNameAway || is_busy != mNameBusy || is_muted != mNameMute)
@@ -3846,27 +3876,19 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 
 
 
-				if (!sRenderGroupTitles)
-				{
-					// If all group titles are turned off, stack first name
-					// on a line above last name
-					line += firstname->getString();
-					line += "\n";
-				}
-				else if (title && title->getString() && title->getString()[0] != '\0')
+				if (sRenderGroupTitles && title && title->getString() && title->getString()[0] != '\0')
 				{
 					line += title->getString();
 					LLStringFn::replace_ascii_controlchars(line,LL_UNKNOWN_CHAR);
 					line += "\n";
-					line += firstname->getString();
+					line += complete_name;
 				}
 				else
 				{
-					line += firstname->getString();
+					line += complete_name;
 				}
 
-				line += " ";
-				line += lastname->getString();
+				
 
 
 
@@ -3915,7 +3937,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 						need_comma = TRUE;
 					}
 					if (additions.length())
-						line += " (" + additions + ")";
+						line += "\n(" + additions + ")";
 
 				}
 				if (is_appearance)
@@ -3934,6 +3956,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				mNameMute = is_muted;
 				mNameAppearance = is_appearance;
 				mTitle = title ? title->getString() : "";
+				mCompleteName = complete_name;
 				LLStringFn::replace_ascii_controlchars(mTitle,LL_UNKNOWN_CHAR);
 				mNameString = utf8str_to_wstring(line);
 				new_name = TRUE;
@@ -4070,7 +4093,41 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 
 
 
+void LLVOAvatar::clearNameTag()
+{
+	mNameString.clear();
+	if (mNameText)
+	{
+		mNameText->setLabel("");
+		mNameText->setString(mNameString);
+	}
+}
 
+//static
+void LLVOAvatar::invalidateNameTag(const LLUUID& agent_id)
+{
+	LLViewerObject* obj = gObjectList.findObject(agent_id);
+	if (!obj) return;
+
+	LLVOAvatar* avatar = dynamic_cast<LLVOAvatar*>(obj);
+	if (!avatar) return;
+
+	avatar->clearNameTag();
+}
+
+//static
+void LLVOAvatar::invalidateNameTags()
+{
+	std::vector<LLCharacter*>::iterator it;
+	for (it = LLCharacter::sInstances.begin(); it != LLCharacter::sInstances.end(); ++it)
+	{
+		LLVOAvatar* avatar = dynamic_cast<LLVOAvatar*>(*it);
+		if (!avatar) continue;
+		if (avatar->isDead()) continue;
+
+		avatar->clearNameTag();
+	}
+}
 
 
 

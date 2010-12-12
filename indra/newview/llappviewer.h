@@ -194,6 +194,7 @@ private:
     
     void idle(); 
     void idleShutdown();
+    void idleNameCache();
     void idleNetwork();
 
     void sendLogoutRequest();
