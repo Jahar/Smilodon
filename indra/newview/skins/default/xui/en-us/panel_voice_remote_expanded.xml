@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel bg_visible="false" border="false" border_visible="false" bottom="0"
+     follows="right|bottom" height="45" left="0" mouse_opaque="true"
+     name="voice_remote" use_bounding_rect="true" width="130">
+	<panel bottom="1" filename="panel_bg_tab.xml" name="panel_bg_tab" height="47" left="0" width="130" />
+	<button bottom="-20" height="20" image_overlay="icn_voice-call-end.tga" label=""
+	     left="4" name="end_call_btn" tool_tip="Click to hang up" width="20" />
+	<button bottom="-20" height="20" image_selected="pos_lock_on.tga" image_unselected="pos_lock_off.tga" label=""
+	     left_delta="28" name="pos_lock_btn" tool_tip="Click to lock position" width="20" toggle="true" scale_image="false" />
+	<panel bottom="13" filename="panel_voice_controls.xml" left="1" />
+</panel>
