@@ -1,7 +1,7 @@
 /* Localized versions of Info.plist keys */
 
-CFBundleName = "Ascent";
+CFBundleName = "Smilodon";
 
-CFBundleShortVersionString = "Ascent version 1.4.2.9";
-CFBundleGetInfoString = "Snowglobe version 1.4.2.9, Balseraph Software Group";
+CFBundleShortVersionString = "Smilodon version 1.4.4.0";
+CFBundleGetInfoString = "Smilodon version 1.4.4.0, Jahar Aabye";
 
