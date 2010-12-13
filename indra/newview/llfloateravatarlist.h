@@ -65,6 +65,16 @@ public:
 	 * @brief Returns the name of the avatar
 	 */
 	std::string getName() { return mName; }
+	
+	/**
+	 * @brief Sets the display name of the avatar
+	 */
+	void setDisplayName(std::string name) { mDisplayName = name; }
+
+	/**
+	 * @brief Returns the display name of the avatar
+	 */
+	std::string getDisplayName() { return mDisplayName; }
 
 	/**
 	 * @brief Returns the ID of the avatar

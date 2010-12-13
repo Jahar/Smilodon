@@ -19,6 +19,7 @@
 #include "llavatarconstants.h"
 #include "llfloateravatarlist.h"
 
+#include "llcachename.h"
 #include "lluictrlfactory.h"
 #include "llviewerwindow.h"
 #include "llscrolllistctrl.h"
@@ -115,7 +116,7 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position) :
-		mID(id), mName(name), mPosition(position), mDrawPosition(), mMarked(FALSE), mFocused(FALSE),
+		mID(id), mName(name), mDisplayName(name), mPosition(position), mDrawPosition(), mMarked(FALSE), mFocused(FALSE),
 		mUpdateTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX),
 		mInChatFrame(U32_MAX), mInShoutFrame(U32_MAX)
 {
@@ -355,6 +356,13 @@ BOOL LLFloaterAvatarList::postBuild()
 void LLFloaterAvatarList::updateAvatarList()
 {
 	if (sInstance != this) return;
+	
+	#ifdef LL_RRINTERFACE_H //MK
+	if (gRRenabled && gAgent.mRRInterface.mContainsShownames)
+	{
+		close();
+	}
+#endif //mk
 
 	//llinfos << "radar refresh: updating map" << llendl;
 
@@ -401,9 +409,7 @@ void LLFloaterAvatarList::updateAvatarList()
 
 		for (i = 0; i < count; ++i)
 		{
-			std::string name;
-			std::string first;
-			std::string last;
+			std::string name, first, last;
 			const LLUUID &avid = avatar_ids[i];
 
 			LLVector3d position;
@@ -446,12 +452,24 @@ void LLFloaterAvatarList::updateAvatarList()
 						continue;
 					}
 				}
-#ifdef LL_RRINTERFACE_H //MK
-				if (gRRenabled && gAgent.mRRInterface.mContainsShownames)
+ifdef LL_DISPLAY_NAMES
+				std::string display_name = name;
+				if (LLAvatarNameCache::useDisplayNames())
 				{
-					name = gAgent.mRRInterface.getDummyName(name);
+					LLAvatarName avatar_name;
+					if (LLAvatarNameCache::get(avid, &avatar_name))
+					{
+						if (LLAvatarNameCache::useDisplayNames() == 2)
+						{
+							display_name = avatar_name.mDisplayName;
+						}
+						else
+						{
+							display_name = avatar_name.getNames();
+						}
+					}
 				}
-#endif //mk
+#endif
 
 				if (avid.isNull())
 				{
@@ -473,6 +491,11 @@ void LLFloaterAvatarList::updateAvatarList()
 						announce_keys.push(avid);
 					mAvatars[avid] = entry;
 				}
+				
+#ifdef LL_DISPLAY_NAMES
+				// update avatar display name.
+				mAvatars[avid].setDisplayName(display_name);
+#endif
 			}
 			else
 			{
@@ -494,12 +517,24 @@ void LLFloaterAvatarList::updateAvatarList()
 					//name = gCacheName->getDefaultName();
 					continue; //prevent (Loading...)
 				}
-#ifdef LL_RRINTERFACE_H //MK
-				if (gRRenabled && gAgent.mRRInterface.mContainsShownames)
+#ifdef LL_DISPLAY_NAMES
+				std::string display_name = name;
+				if (LLAvatarNameCache::useDisplayNames())
 				{
-					name = gAgent.mRRInterface.getDummyName(name);
+					LLAvatarName avatar_name;
+					if (LLAvatarNameCache::get(avid, &avatar_name))
+					{
+						if (LLAvatarNameCache::useDisplayNames() == 2)
+						{
+							display_name = avatar_name.mDisplayName;
+						}
+						else
+						{
+							display_name = avatar_name.getNames();
+						}
+					}
 				}
-#endif //mk
+#endif
 
 				if (mAvatars.count(avid) > 0)
 				{
@@ -514,6 +549,11 @@ void LLFloaterAvatarList::updateAvatarList()
 						announce_keys.push(avid);
 					mAvatars[avid] = entry;
 				}
+				
+#ifdef LL_DISPLAY_NAMES
+				// update avatar display name.
+				mAvatars[avid].setDisplayName(display_name);
+#endif
 			}
 		}
 		//let us send the keys in a more timely fashion
@@ -586,7 +626,7 @@ void LLFloaterAvatarList::expireAvatarList()
 
 		if (entry->isDead())
 		{
-			//llinfos << "radar: expiring avatar " << entry->getName() << llendl;
+			//llinfos << "radar: expiring avatar " << entry->getDisplayName() << llendl;
 			LLUUID av_id = entry->getID();
 			delete_queue.push(av_id);
 		}
@@ -638,7 +678,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		}
 
 		av_id = entry->getID();
-		av_name = entry->getName().c_str();
+		av_name = entry->getDisplayName().c_str();
 
 		LLVector3d position = entry->getPosition();
 		BOOL UnknownAltitude = false;
@@ -916,8 +956,8 @@ void LLFloaterAvatarList::onClickTrack(void *userdata)
 		self->mTracking = TRUE;
 		self->mTrackedAvatar = agent_id;
 //		trackAvatar only works for friends allowing you to see them on map...
-//		LLTracker::trackAvatar(agent_id, self->mAvatars[agent_id].getName());
-		std::string name = self->mAvatars[agent_id].getName();
+//		LLTracker::trackAvatar(agent_id, self->mAvatars[agent_id].getDisplayName());
+		std::string name = self->mAvatars[agent_id].getDisplayName();
 		if (!self->mUpdate)
 		{
 			name += "\n(last known position)";
@@ -935,7 +975,7 @@ void LLFloaterAvatarList::refreshTracker()
 		LLVector3d pos = mAvatars[mTrackedAvatar].getPosition();
 		if (pos != LLTracker::getTrackedPositionGlobal())
 		{
-			std::string name = mAvatars[mTrackedAvatar].getName();
+			std::string name = mAvatars[mTrackedAvatar].getDisplayName();
 			if (!mUpdate)
 			{
 				name += "\n(last known position)";
@@ -1366,7 +1406,7 @@ void LLFloaterAvatarList::doCommand(void (*func)(const LLUUID &avatar, const std
 		LLAvatarListEntry *entry = getAvatarEntry(avid);
 		if (entry != NULL)
 		{
-			llinfos << "Executing command on " << entry->getName() << llendl;
+			llinfos << "Executing command on " << entry->getDisplayName() << llendl;
 			func(avid, entry->getName());
 		}
 	}
@@ -1558,7 +1598,7 @@ void LLFloaterAvatarList::onClickTeleport(void* userdata)
 		LLAvatarListEntry *entry = self->getAvatarEntry(agent_id);
 		if (entry)
 		{
-//			llinfos << "Trying to teleport to " << entry->getName() << " at " << entry->getPosition() << llendl;
+//			llinfos << "Trying to teleport to " << entry->getDisplayName() << " at " << entry->getPosition() << llendl;
 			gAgent.teleportViaLocation(entry->getPosition());
 		}
 	}
