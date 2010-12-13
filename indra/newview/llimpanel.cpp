@@ -1560,8 +1560,9 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 	return TRUE;
 }
 
-void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4& color, bool log_to_file, const LLUUID& source, const std::string& name)
+void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4& color, bool log_to_file, const LLUUID& source, const std::string& const_name)
 {
+	std::string name = const_name;
 	// start tab flashing when receiving im for background session from user
 	if (source != LLUUID::null)
 	{
@@ -1598,6 +1599,21 @@ void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4
 		}
 		else
 		{
+		if (LLAvatarNameCache::useDisplayNames() && source != LLUUID::null)
+			{
+				LLAvatarName avatar_name;
+				if (LLAvatarNameCache::get(source, &avatar_name))
+				{
+					if (LLAvatarNameCache::useDisplayNames() == 2)
+					{
+						name = avatar_name.mDisplayName;
+					}
+					else
+					{
+						name = avatar_name.getNames();
+					}
+				}
+			}
 			// Convert the name to a hotlink and add to message.
 			const LLStyleSP &source_style = LLStyleMap::instance().lookupAgent(source);
 			mHistoryEditor->appendStyledText(name,false,prepend_newline,source_style);
@@ -1615,7 +1631,7 @@ void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4
 		else
 			histstr = name + utf8msg;
 
-		LLLogChat::saveHistory(getTitle(),histstr);
+		LLLogChat::saveHistory(mSessionLabel, histstr);
 	}
 
 	if (!isInVisibleChain())
@@ -2125,6 +2141,21 @@ void LLFloaterIMPanel::sendMsg()
 				{
 					std::string history_echo;
 					gAgent.buildFullname(history_echo);
+					if (LLAvatarNameCache::useDisplayNames())
+					{
+						LLAvatarName avatar_name;
+						if (LLAvatarNameCache::get(gAgent.getID(), &avatar_name))
+						{
+							if (LLAvatarNameCache::useDisplayNames() == 2)
+							{
+								history_echo = avatar_name.mDisplayName;
+							}
+							else
+							{
+								history_echo = avatar_name.getNames();
+							}
+						}
+					}
 
 					// Look for IRC-style emotes here.
 					std::string prefix = utf8text.substr(0, 4);

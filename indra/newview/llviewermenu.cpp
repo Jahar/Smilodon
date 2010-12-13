@@ -3701,15 +3701,7 @@ class LLEditEnableCustomizeAvatar : public view_listener_t
 	}
 };
 
-class LLEditEnableDisplayName : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		bool new_value = (LLAvatarNameCache::useDisplayNames() != 0);
-		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
-		return true;
-	}
-};
+
 
 class LLEditEnableDisplayName : public view_listener_t
 {

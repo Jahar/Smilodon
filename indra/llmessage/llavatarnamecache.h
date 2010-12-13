@@ -32,6 +32,9 @@
 
 #include <boost/signals2.hpp>
 
+// We have display names support (this is for use by patches)
+#define LL_DISPLAY_NAMES
+
 class LLSD;
 class LLUUID;
 

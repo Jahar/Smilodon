@@ -217,16 +217,28 @@ public:
 		{
 			const std::string DUMMY_NAME("\?\?\?");
 			LLAvatarName av_name;
-			av_name.mUsername = DUMMY_NAME;
-			av_name.mDisplayName = DUMMY_NAME;
 			av_name.mIsDisplayNameDefault = false;
 			av_name.mIsDummy = true;
 			av_name.mExpires = expires;
 
-			it = unresolved_agents.beginArray();
-			for ( ; it != unresolved_agents.endArray(); ++it)
+			for (it = unresolved_agents.beginArray(); it != unresolved_agents.endArray(); ++it)
 			{
 				const LLUUID& agent_id = *it;
+				gCacheName->getName(agent_id, first, last);
+				av_name.mLegacyFirstName = first;
+				av_name.mLegacyLastName = last;
+				av_name.mDisplayName = first;
+				if (last == "Resident")
+				{
+					av_name.mDisplayName = first;
+					av_name.mUsername = first;
+				}
+				else
+				{
+					av_name.mDisplayName = first + " " + last;
+					av_name.mUsername = first + "." + last;
+				}
+				LLStringUtil::toLower(av_name.mUsername);
 				// cache it and fire signals
 				LLAvatarNameCache::processName(agent_id, av_name, true);
 			}
@@ -240,20 +252,32 @@ public:
 		// errors.
 		F64 retry_timestamp = errorRetryTimestamp(status);
 
-		// *NOTE: "??" starts trigraphs in C/C++, escape the question marks.
-		const std::string DUMMY_NAME("\?\?\?");
+		std::string first, last;
 		LLAvatarName av_name;
-		av_name.mUsername = DUMMY_NAME;
-		av_name.mDisplayName = DUMMY_NAME;
 		av_name.mIsDisplayNameDefault = false;
 		av_name.mIsDummy = true;
 		av_name.mExpires = retry_timestamp;
 
 		// Add dummy records for all agent IDs in this request
-		std::vector<LLUUID>::const_iterator it = mAgentIDs.begin();
-		for ( ; it != mAgentIDs.end(); ++it)
+		std::vector<LLUUID>::const_iterator it;
+		for (it = mAgentIDs.begin(); it != mAgentIDs.end(); ++it)
 		{
 			const LLUUID& agent_id = *it;
+			gCacheName->getName(agent_id, first, last);
+			av_name.mLegacyFirstName = first;
+			av_name.mLegacyLastName = last;
+			av_name.mDisplayName = first;
+			if (last == "Resident")
+			{
+				av_name.mDisplayName = first;
+				av_name.mUsername = first;
+			}
+			else
+			{
+				av_name.mDisplayName = first + " " + last;
+				av_name.mUsername = first + "." + last;
+			}
+			LLStringUtil::toLower(av_name.mUsername);
 			// cache it and fire signals
 			LLAvatarNameCache::processName(agent_id, av_name, true);
 		}

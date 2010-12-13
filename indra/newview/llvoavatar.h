@@ -63,8 +63,7 @@ extern const LLUUID ANIM_AGENT_PELVIS_FIX;
 extern const LLUUID ANIM_AGENT_TARGET;
 extern const LLUUID ANIM_AGENT_WALK_ADJUST;
 
-// We have display names support:
-#define LL_DISPLAY_NAMES
+
 
 class LLTexLayerSet;
 class LLVoiceVisualizer;

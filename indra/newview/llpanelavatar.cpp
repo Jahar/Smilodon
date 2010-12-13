@@ -36,7 +36,6 @@
 
 #include "llclassifiedflags.h"
 #include "llfontgl.h"
-#include "llavatarnamecache.h"
 #include "llcachename.h"
 
 #include "llavatarconstants.h"
