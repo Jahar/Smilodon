@@ -46,11 +46,11 @@
 				  tool_tip="The client tag (And subsequent color) to broadcast. Overridden locally by Custom Tag/Color."
 		    	  name="tag_spoofing_combobox" width="130">
 				<combo_item type="string" length="1" enabled="true" name="Ascent" 
-					value="8873757c-092a-98fb-1afd-ecd347566fcd">
+					value="01f13da6-fd61-82be-5a8b-68f2d165d8cd">
 					Ascent
 				</combo_item>
 				<combo_item type="string" length="1" enabled="true" name="Explicit" 
-					value="734fed29-4c51-63e5-1648-6589949d7585">
+					value="01f13da6-fd61-82be-5a8b-68f2d165d8cd">
 					Explicit
 				</combo_item>
 			</combo_box>
