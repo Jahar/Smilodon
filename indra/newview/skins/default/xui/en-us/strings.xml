@@ -1669,5 +1669,25 @@ Returns the value for header for request_id
     llSetLinkTextureAnim(integer link, integer mode, integer face, integer sizex, integer sizey, float start, float length, float rate)
     Animate the texture on the specified face/faces of the specified prim/prims by setting the texture scale and offset.
   </string>
+  <string name="LSLTipText_llGetLinkNumberOfSides">
+	integer llGetLinkNumberOfSides(integer link)
+	Similar to llGetNumberOfSides() but applies to any prim in the link set.
+  </string>
+  <string name="LSLTipText_llGetUsername" translate="false">
+	string llGetUsername(key id)
+	Returns the single-word username of an avatar, iff the avatar is in the current region, otherwise the empty string.
+  </string>
+  <string name="LSLTipText_llRequestUsername" translate="false">
+	key llRequestUsername(key id)
+	Requests single-word username of an avatar.  When data is available the dataserver event will be raised.
+  </string>
+  <string name="LSLTipText_llGetDisplayName" translate="false">
+	string llGetDisplayName(key id)
+	Returns the name of an avatar, iff the avatar is in the current simulator, otherwise the empty string.
+  </string>
+  <string name="LSLTipText_llRequestDisplayName" translate="false">
+	key llRequestDisplayName(key id)
+	Requests name of an avatar.  When data is available the dataserver event will be raised.
+  </string>
 </strings>
 
