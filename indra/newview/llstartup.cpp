@@ -2688,11 +2688,6 @@ bool idle_startup()
 	
 			// Load stored cache if possible
             LLAppViewer::instance()->loadNameCache();
-
-			// Start cache in not-running state until we figure out if we have
-			// capabilities for display name lookup
-			LLAvatarNameCache::initClass(false);
-			LLAvatarNameCache::setUseDisplayNames(gSavedSettings.getU32("DisplayNamesUsage"));
 		}
 
 		// *Note: this is where gWorldMap used to be initialized.

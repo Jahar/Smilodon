@@ -36,7 +36,6 @@
 #include "llhoverview.h"
 
 // Library includes
-#include "llavatarnamecache.h"
 #include "llfontgl.h"
 #include "message.h"
 #include "llgl.h"
@@ -247,32 +246,14 @@ void LLHoverView::updateText()
 			LLNameValue* lastname =  hit_object->getNVPair("LastName");
 			if (firstname && lastname)
 			{
-				std::string complete_name = firstname->getString();
-				complete_name += " ";
-				complete_name += lastname->getString();
-
-				if (LLAvatarNameCache::useDisplayNames())
-				{
-					LLAvatarName avatar_name;
-					if (LLAvatarNameCache::get(hit_object->getID(), &avatar_name))
-					{
-						if (LLAvatarNameCache::useDisplayNames() == 2)
-						{
-							complete_name = avatar_name.mDisplayName;
-						}
-						else
-						{
-							complete_name = avatar_name.getNames();
-						}
-					}
-				}
-
 				if (title)
 				{
 					line.append(title->getString());
 					line.append(1, ' ');
 				}
-				line += complete_name;
+				line.append(firstname->getString());
+				line.append(1, ' ');
+				line.append(lastname->getString());
 			}
 			else
 			{

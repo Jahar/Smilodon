@@ -170,7 +170,6 @@ set(viewer_SOURCE_FILES
     llfloaterdaycycle.cpp
     llfloaterdickdongs.cpp
     llfloaterdirectory.cpp
-	llfloaterdisplayname.cpp
     llfloatereditui.cpp
     llfloaterenvsettings.cpp
     llfloaterevent.cpp
@@ -415,7 +414,6 @@ set(viewer_SOURCE_FILES
     llviewercamera.cpp
     llviewercontrol.cpp
     llviewerdisplay.cpp
-	llviewerdisplayname.cpp
     llviewergenericmessage.cpp
     llviewergesture.cpp
     llviewerimage.cpp
@@ -624,7 +622,6 @@ set(viewer_HEADER_FILES
     llfloaterdaycycle.h
     llfloaterdickdongs.h
     llfloaterdirectory.h
-	llfloaterdisplayname.h
     llfloatereditui.h
     llfloaterenvsettings.h
     llfloaterexport.h
@@ -873,7 +870,6 @@ set(viewer_HEADER_FILES
     llviewercamera.h
     llviewercontrol.h
     llviewerdisplay.h
-	llviewerdisplayname.h
     llviewergenericmessage.h
     llviewergesture.h
     llviewerimage.h

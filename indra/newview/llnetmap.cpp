@@ -36,7 +36,6 @@
 #include "llnetmap.h"
 
 #include "indra_constants.h"
-#include "llavatarnamecache.h"
 #include "llui.h"
 #include "llmath.h"		// clampf()
 #include "llfocusmgr.h"
@@ -619,32 +618,6 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		std::string fullname;
 		if(mClosestAgentToCursor.notNull() && gCacheName->getFullName(mClosestAgentToCursor, fullname))
 		{
-		#ifdef LL_RRINTERFACE_H //MK
-			if (gRRenabled && gAgent.mRRInterface.mContainsShownames)
-			{
-				fullname = gAgent.mRRInterface.getDummyName(fullname);
-			}
-			else
-			{
-#endif //mk
-				if (LLAvatarNameCache::useDisplayNames())
-				{
-					LLAvatarName avatar_name;
-					if (LLAvatarNameCache::get(mClosestAgentToCursor, &avatar_name))
-					{
-						if (LLAvatarNameCache::useDisplayNames() == 2)
-						{
-							fullname = avatar_name.mDisplayName;
-						}
-						else
-						{
-							fullname = avatar_name.getNames(true);
-						}
-					}
-				}
-#ifdef LL_RRINTERFACE_H //MK
-			}
-#endif //mk
 			msg.append(fullname);
 			msg.append("\n");
 

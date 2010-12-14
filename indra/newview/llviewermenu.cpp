@@ -41,7 +41,6 @@
 
 // linden library includes
 #include "llaudioengine.h"
-#include "llavatarnamecache.h"
 #include "indra_constants.h"
 #include "llassetstorage.h"
 
@@ -116,7 +115,6 @@
 //#include "llfloaterdickdongs.h" No need for the custom floater right now, I think. -HgB
 #include "ascentuploadbrowser.h" //New customer floater attempts
 #include "llfloaterdirectory.h"
-#include "llfloaterdisplayname.h"
 #include "llfloatereditui.h"
 #include "llfloaterchatterbox.h"
 #include "llfloaterfriends.h"
@@ -3701,26 +3699,6 @@ class LLEditEnableCustomizeAvatar : public view_listener_t
 	}
 };
 
-class LLEditEnableDisplayName : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		bool new_value = (LLAvatarNameCache::useDisplayNames() != 0);
-		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
-		return true;
-	}
-};
-
-class LLEditEnableDisplayName : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		bool new_value = (LLAvatarNameCache::useDisplayNames() != 0);
-		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
-		return true;
-	}
-};
-
 // only works on pie menu
 bool handle_sit_or_stand()
 {
@@ -6099,10 +6077,6 @@ class LLShowFloater : public view_listener_t
 		{
 			LLToolBar::toggle(NULL);
 		}
-		else if (floater_name == "displayname")
-		{
-			LLFloaterDisplayName::show();
-		}		
 		else if (floater_name == "chat history")
 		{
 			LLFloaterChat::toggleInstance(LLSD());
@@ -9712,7 +9686,6 @@ void initialize_menus()
 	addMenu(new LLEditEnableDuplicate(), "Edit.EnableDuplicate");
 	addMenu(new LLEditEnableTakeOff(), "Edit.EnableTakeOff");
 	addMenu(new LLEditEnableCustomizeAvatar(), "Edit.EnableCustomizeAvatar");
-	addMenu(new LLEditEnableDisplayName(), "Edit.EnableDisplayName");
 
 	// View menu
 	addMenu(new LLViewMouselook(), "View.Mouselook");

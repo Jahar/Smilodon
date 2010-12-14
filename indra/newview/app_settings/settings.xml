@@ -5028,17 +5028,6 @@
       <key>Value</key>
       <string />
     </map>
-    <key>DisplayNamesUsage</key>
-    <map>
-      <key>Comment</key>
-      <string>Usage type for display names: 0 = Legacy name only, 1 = Display name with legacy name, 2 = display name only (legacy name when absent)</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>U32</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
     <key>FirstPersonAvatarVisible</key>
     <map>
       <key>Comment</key>

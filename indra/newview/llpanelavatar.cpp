@@ -36,7 +36,6 @@
 
 #include "llclassifiedflags.h"
 #include "llfontgl.h"
-#include "llavatarnamecache.h"
 #include "llcachename.h"
 
 #include "llavatarconstants.h"
@@ -1564,33 +1563,7 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 		{
 			name_edit->setText(name);
 		}
-		childSetVisible("name", TRUE);
 	}
-	
-	LLNameEditor* complete_name_edit = getChild<LLNameEditor>("complete_name");
-	if (complete_name_edit)
-	{
-		if (LLAvatarNameCache::useDisplayNames())
-		{
-			LLAvatarName avatar_name;
-			if (LLAvatarNameCache::get(avatar_id, &avatar_name))
-			{
-				complete_name_edit->setText(avatar_name.getNames());
-			}
-			else
-			{
-				complete_name_edit->setText(name_edit->getText());
-				LLAvatarNameCache::get(avatar_id, boost::bind(&LLPanelAvatar::completeNameCallback, _1, _2, this));			
-			}
-			childSetVisible("name", FALSE);
-			childSetVisible("complete_name", TRUE);
-		}
-		else
-		{
-			childSetVisible("complete_name", FALSE);
-		}
-	}
-
 	LLNameEditor* key_edit = getChild<LLNameEditor>("avatar_key");
 	if(key_edit)
 	{
@@ -1711,21 +1684,6 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 	childSetEnabled("csr_btn", is_god);
 }
 
-void LLPanelAvatar::completeNameCallback(const LLUUID& agent_id,
-										 const LLAvatarName& avatar_name,
-										 void *userdata)
-{
-	LLPanelAvatar* self = (LLPanelAvatar*)userdata;
-	if (!LLAvatarNameCache::useDisplayNames() || agent_id != self->mAvatarID)
-	{
-		return;
-	}
-	LLLineEditor* complete_name_edit = self->getChild<LLLineEditor>("complete_name");
-	if (complete_name_edit)
-	{
-		complete_name_edit->setText(avatar_name.getNames());
-	}
-}
 
 void LLPanelAvatar::resetGroupList()
 {

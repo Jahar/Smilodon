@@ -98,8 +98,6 @@ LLVoiceChannel* LLVoiceChannel::sSuspendedVoiceChannel = NULL;
 
 BOOL LLVoiceChannel::sSuspended = FALSE;
 
-std::set<LLFloaterIMPanel*> LLFloaterIMPanel::sFloaterIMPanels;
-
 void session_starter_helper(
 	const LLUUID& temp_session_id,
 	const LLUUID& other_participant_id,
@@ -1102,7 +1100,6 @@ LLFloaterIMPanel::LLFloaterIMPanel(
 	mFirstKeystrokeTimer(),
 	mLastKeystrokeTimer()
 {
-	sFloaterIMPanels.insert(this);
 	init(session_label);
 }
 
@@ -1135,7 +1132,6 @@ LLFloaterIMPanel::LLFloaterIMPanel(
 	mFirstKeystrokeTimer(),
 	mLastKeystrokeTimer()
 {
-	sFloaterIMPanels.insert(this);
 	mSessionInitialTargetIDs = ids;
 	init(session_label);
 }
@@ -1144,7 +1140,6 @@ LLFloaterIMPanel::LLFloaterIMPanel(
 void LLFloaterIMPanel::init(const std::string& session_label)
 {
 	mSessionLabel = session_label;
-	mProfileButtonEnabled = FALSE;
 
 	std::string xml_filename;
 	switch(mDialog)
@@ -1200,11 +1195,6 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 								FALSE);
 
 	setTitle(mSessionLabel);
-	if (mProfileButtonEnabled)
-	{
-		lookupName();
-	}
-
 	mInputEditor->setMaxTextLength(DB_IM_MSG_STR_LEN);
 	// enable line history support for instant message bar
 	mInputEditor->setEnableLineHistory(TRUE);
@@ -1246,31 +1236,9 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 	}
 }
 
-void LLFloaterIMPanel::lookupName()
-{
-	LLAvatarNameCache::get(mOtherParticipantUUID, boost::bind(&LLFloaterIMPanel::onAvatarNameLookup, _1, _2, this));
-}
-
-//static 
-void LLFloaterIMPanel::onAvatarNameLookup(const LLUUID& id, const LLAvatarName& avatar_name, void* user_data)
-{
-	LLFloaterIMPanel* self = (LLFloaterIMPanel*)user_data;
-
-	if (self && sFloaterIMPanels.count(self) != 0)
-	{
-		std::string title = avatar_name.getNames();
-		if (!title.empty())
-		{
-			self->setTitle(title);
-		}
-	}
-}
-
 
 LLFloaterIMPanel::~LLFloaterIMPanel()
 {
-	sFloaterIMPanels.erase(this);
-
 	delete mSpeakers;
 	mSpeakers = NULL;
 	

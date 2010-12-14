@@ -39,7 +39,6 @@
 #ifndef LL_LLFLOATERAVATARINFO_H
 #define LL_LLFLOATERAVATARINFO_H
 
-#include "llavatarnamecache.h"
 #include "llfloater.h"
 #include "llpreview.h"
 #include "lluuid.h"
@@ -92,7 +91,8 @@ public:
 
 	static LLFloaterAvatarInfo* getInstance(const LLUUID &id);
 	static void showProfileCallback(S32 option, void *userdata);
-	static void callbackLoadAvatarName(const LLUUID& agent_id, const LLAvatarName& avatar_name);
+	static void callbackLoadAvatarName(const LLUUID& id,
+		const std::string& first, const std::string& last, BOOL is_group, void* data);
 	void resetGroupList();
 
 private:
