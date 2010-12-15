@@ -783,6 +783,31 @@ void LLFloaterWindLight::onNewPreset(void* userData)
 	LLNotifications::instance().add("NewSkyPreset", LLSD(), LLSD(), newPromptCallback);
 }
 
+class KVFloaterWindLightNotecardCreatedCallback : public LLInventoryCallback
+ {
+ public:
+ 
+ 	void fire(const LLUUID& inv_item);
+ };
+ 
+ void KVFloaterWindLightNotecardCreatedCallback::fire(const LLUUID& inv_item)
+ {
+ 	LLWLParamManager * param_mgr = LLWLParamManager::instance();
+	
+ 	param_mgr->setParamSet(param_mgr->mCurParams.mName, param_mgr->mCurParams);
+	
+ 	param_mgr->mParamList[param_mgr->mCurParams.mName].mInventoryID = inv_item;
+	
+ 	param_mgr->mCurParams.mInventoryID = inv_item;
+	
+ 	LL_INFOS("WindLight") << "Created inventory item " << inv_item << LL_ENDL;
+	
+ 	param_mgr->savePresetToNotecard(param_mgr->mCurParams.mName);
+	
+ }
+
+
+
 void LLFloaterWindLight::onSavePreset(void* userData)
 {
 	// get the name
@@ -809,6 +834,76 @@ void LLFloaterWindLight::onSavePreset(void* userData)
 
 	LLNotifications::instance().add("WLSavePresetAlert", LLSD(), LLSD(), saveAlertCallback);
 }
+
+if (ctrl->getValue().asString() == "save_inventory_item")
+ 	{
+ 		// Check if this is already a notecard and that its not in the trash or purged.
+ 		LLUUID trash_id;
+ 		trash_id = gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH);
+ 		if(LLWLParamManager::instance()->mCurParams.mInventoryID.notNull() 
+ 			&& !gInventory.isObjectDescendentOf(LLWLParamManager::instance()->mCurParams.mInventoryID, trash_id)
+ 			&& gInventory.isObjectDescendentOf(LLWLParamManager::instance()->mCurParams.mInventoryID, gAgent.getInventoryRootID())
+ 		)
+  		{
+ 			LLNotifications::instance().add("KittyWLSaveNotecardAlert", LLSD(), LLSD(), saveNotecardCallback);
+ 		}
+ 		else
+ 		{
+ 			// Make sure we have a ".wl" extension.
+ 			std::string name = comboBox->getSelectedItemLabel();
+ 			if(name.length() > 2 && name.compare(name.length() - 3, 3, ".wl") != 0)
+ 			{
+ 				name += ".wl";
+ 			}
+ 			LLPointer<KVFloaterWindLightNotecardCreatedCallback> cb = new KVFloaterWindLightNotecardCreatedCallback();
+ 			// Create a notecard and then save it.
+ 			create_inventory_item(gAgent.getID(), 
+ 								  gAgent.getSessionID(),
+ 								  LLUUID::null,
+ 								  LLTransactionID::tnull,
+ 								  name,
+ 								  "WindLight settings (Imprudence compatible)",
+ 								  LLAssetType::AT_NOTECARD,
+ 								  LLInventoryType::IT_NOTECARD,
+ 								  NOT_WEARABLE,
+ 								  PERM_ITEM_UNRESTRICTED,
+ 								  cb);
+ 			
+ 		}
+ 	}
+	
+	else
+ 	{
+ 		// check to see if it's a default and shouldn't be overwritten
+ 		std::set<std::string>::iterator sIt = sDefaultPresets.find(
+ 			comboBox->getSelectedItemLabel());
+ 		if(sIt != sDefaultPresets.end() && !gSavedSettings.getBOOL("SkyEditPresets")) 
+ 		{
+ 			LLNotifications::instance().add("WLNoEditDefault");
+ 			return;
+ 		} 
+ 		
+		LLWLParamManager::instance()->mCurParams.mName = 
+ 			comboBox->getSelectedItemLabel();
+  		LLNotifications::instance().add("WLSavePresetAlert", LLSD(), LLSD(), saveAlertCallback);
+ 	}
+ }
+ 
+ bool LLFloaterWindLight::saveNotecardCallback(const LLSD& notification, const LLSD& response)
+ {
+ 	S32 option = LLNotification::getSelectedOption(notification, response);
+ 	
+	// if they choose save, do it.  Otherwise, don't do anything
+ 	if(option == 0) 
+ 	{
+ 		LLWLParamManager * param_mgr = LLWLParamManager::instance();
+ 		param_mgr->setParamSet(param_mgr->mCurParams.mName, param_mgr->mCurParams);
+ 		param_mgr->savePresetToNotecard(param_mgr->mCurParams.mName);
+ 	}
+ 	return false;
+ }
+
+
 
 bool LLFloaterWindLight::saveAlertCallback(const LLSD& notification, const LLSD& response)
 {
