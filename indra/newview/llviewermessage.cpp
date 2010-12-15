@@ -143,6 +143,8 @@
 #include "llviewernetwork.h"
 // </edit>
 
+#include "kcwlinterface.h"
+
 #include <boost/tokenizer.hpp>
 
 #if LL_WINDOWS // For Windows specific error handler
@@ -2803,6 +2805,8 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				break;
 			case CHAT_TYPE_DEBUG_MSG:
 			case CHAT_TYPE_OWNER:
+				if(KCWindlightInterface::instance().ChatCommand(mesg, from_name, from_id, owner_id))return;
+
 			case CHAT_TYPE_NORMAL:
 				verb = ": ";
 				break;

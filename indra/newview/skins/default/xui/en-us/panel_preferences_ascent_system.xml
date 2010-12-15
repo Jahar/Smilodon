@@ -530,5 +530,15 @@ Use #f for user's first name, #l for last name,
 				name="EmBuildPrefsActualRoot_toggle" control_name="AscentBuildPrefs_ActualRoot"
 				radio_style="false" width="270"/>
 		</panel>
+		<!--Windlight-->-
+		<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Windlight" left="1" mouse_opaque="true" name="Windlight" width="418">
+			<text bottom="-20" left="10" type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false" drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="12" mouse_opaque="true" name="TextText" v_pad="0" width="128">General</text>
+			<check_box bottom_delta="-25" left_delta="0" label="Save Windlight settings on logout" control_name="PhoenixRestoreLastWLsettingsOnLogin" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="true" mouse_opaque="true" name="PhoenixRestoreLastWLsettingsOnLogin" radio_style="false" width="256"/>
+			<text bottom="-65" left="10" type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false" drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="12" mouse_opaque="true" name="TextText" v_pad="0" width="200">Phoenix WL Share (Experimental)</text>
+			<check_box bottom_delta="-25" left_delta="0" label="Use Phoenix Parcel Windlight Sharing (Experimental)" control_name="PhoenixWLParcelEnabled" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="true" mouse_opaque="true" name="PhoenixWLParcelEnabled" radio_style="false" width="256"/>
+			<check_box bottom_delta="-20" left_delta="5" label="Auto apply WL settings from friend's land" control_name="PhoenixWLWhitelistFriends" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="true" mouse_opaque="true" name="PhoenixWLWhitelistFriends" radio_style="false" width="256"/>
+			<check_box bottom_delta="-17" left_delta="0" label="Auto apply WL settings from my groups' land" control_name="PhoenixWLWhitelistGroups" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="true" mouse_opaque="true" name="PhoenixWLWhitelistGroups" radio_style="false" width="256"/>
+			<check_box bottom_delta="-17" left_delta="0" label="Auto apply WL settings from any parcel" control_name="PhoenixWLWhitelistAll" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="true" mouse_opaque="true" name="PhoenixWLWhitelistAll" radio_style="false" width="256"/>
+		</panel>
 	</tab_container>
 </panel>
